@@ -27,11 +27,6 @@ url_string_var=tkinter.StringVar()
 entry_url = ttk.Entry(root, textvariable=url_string_var, width=102)
 entry_url.place(anchor="nw", x=70, y=40)
 
-
-
-
-
-
 def iniciar_busca():
 
     #URL BASE DA PESQUISA
