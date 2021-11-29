@@ -13,7 +13,7 @@ from selenium.webdriver import Chrome
 
 #INTERFACE
 root = tkinter.Tk()
-root.title('E-Data  -  Desenvolvido pelo Eng. Leonardo Sales Duarte')
+root.title('ColetaImovel  -  Desenvolvido pelo Eng. Leonardo Sales Duarte')
 root.geometry('720x360')
 root.maxsize(720,360)
 root.minsize(720,360)
