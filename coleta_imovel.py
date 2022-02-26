@@ -10,14 +10,13 @@ from urllib.request import urlretrieve
 from selenium.webdriver import Chrome
 
 #URL BASE DA PESQUISA
-url_base = 'https://www.imovelweb.com.br/apartamentos-venda-centro-curitiba-300000-5000000-reales-drc-centro.html'
+url_base = input('Insira a URL: ')
 
 #FUNÇÃO QUE RETORNA O HTML USANDO O SELENIUM
 def get_html(url_base):
     driver = Chrome()
     driver.get(url_base)
     html = driver.page_source
-    print(driver.current_url)
     return html
 
 #FUNÇÃO PARA TRATAR O HTML
@@ -31,23 +30,25 @@ soup = BeautifulSoup(html, 'html.parser')
 
 #NUMERO DE IMOVEIS
 numero_de_imoveis = soup.find('h1', {'class': 'list-result-title'}).get_text()
+numero_de_imoveis = int(numero_de_imoveis.split()[0].replace(".", ""))
 print(numero_de_imoveis)
-numero_de_imoveis = int(numero_de_imoveis.split()[0])
+print(f'\nFoi detectado um total de {numero_de_imoveis} imóveis.\n')
 
 #ENCONTRANDO O NUMERO DE PAGINAS
 numero_de_paginas = numero_de_imoveis/21 #21 IMOVEIS POR PAG
 numero_de_paginas = math.ceil(numero_de_paginas)
-print(numero_de_paginas)
+print(f'Foi detectado um total de {numero_de_paginas} páginas.\n')
+print(f'Buscando informações...\n')
 
 #LISTA QUE REPRESENTA TODAS OS ANUNCIOS DE TODAS AS PAGINAS
 cards = []
 
 #LOOP PARA CADA PAGINA
 for i in range(numero_de_paginas):
-
+    print(f'Etapa {i+1} de {numero_de_paginas}')
     url = url_base
     url = url.replace('.html', f'-pagina-{i+1}.html')
-    print(url)
+    #print(url)
     html = get_html(url)
     html = tratar_html(html)
     soup = BeautifulSoup(html, 'html.parser')
@@ -59,11 +60,16 @@ for i in range(numero_de_paginas):
         card = {}
 
         # VALOR
-        if anuncio.find('div', class_ ="postingCardPriceBlock").find('span'):
-            valor = anuncio.find('div', class_ ="postingCardPriceBlock").find('span').get('data-price') #ok
-            card['value'] = valor
-        else:
-            card['value'] = math.nan
+        #--- nao tinha o try e except
+        try:
+            if anuncio.find('div', class_ ="postingCardPriceBlock").find('span'):
+                valor = anuncio.find('div', class_ ="postingCardPriceBlock").find('span').get('data-price') #ok
+                card['value'] = valor
+            else:
+                card['value'] = math.nan
+        except AttributeError:
+            continue
+        #---
 
         # AREA
         if anuncio.find('i', class_="iconArea"):
